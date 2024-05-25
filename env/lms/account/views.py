@@ -23,11 +23,11 @@ def doLogin(request):
         if user!=None:
             login(request,user)
             if user.user_type=="1":
-                return HttpResponseRedirect('/admin_home')
+                return HttpResponseRedirect('admin_home')
             elif user.user_type=="2":
-                return HttpResponseRedirect(reverse("staff_home"))
+                return HttpResponseRedirect("staff_home")
             else:
-                return HttpResponseRedirect(reverse("student_home"))
+                return HttpResponseRedirect("student_home")
         else:
             messages.error(request,"Invalid Login Details")
             return HttpResponseRedirect("/")
@@ -100,11 +100,16 @@ def add_course_save(request):
             messages.error(request,"Failed To Add Course")
             return HttpResponseRedirect(reverse("add_course"))
 
-def add_student(request):
+def hod_add_student(request):
     form=AddStudentForm()
     return render(request,"hod_template/add_student_template.html",{"form":form})
 
-def add_student_save(request):
+def staff_add_student(request):
+    form=AddStudentForm()
+    return render(request,"staff_template/add_student_template.html",{"form":form})
+
+
+def hod_add_student_save(request):
     if request.method!="POST":
         return HttpResponse("Method Not Allowed")
     else:
@@ -144,12 +149,58 @@ def add_student_save(request):
         else:
             form=AddStudentForm(request.POST)
             return render(request, "hod_template/add_student_template.html", {"form": form})
+        
+def staff_add_student_save(request):
+    if request.method!="POST":
+        return HttpResponse("Method Not Allowed")
+    else:
+        form=AddStudentForm(request.POST,request.FILES)
+        if form.is_valid():
+            first_name=form.cleaned_data["first_name"]
+            last_name=form.cleaned_data["last_name"]
+            username=form.cleaned_data["username"]
+            email=form.cleaned_data["email"]
+            password=form.cleaned_data["password"]
+            address=form.cleaned_data["address"]
+            session_start=form.cleaned_data["session_start"]
+            session_end=form.cleaned_data["session_end"]
+            course_id=form.cleaned_data["course"]
+            sex=form.cleaned_data["sex"]
+
+            profile_pic=request.FILES['profile_pic']
+            fs=FileSystemStorage()
+            filename=fs.save(profile_pic.name,profile_pic)
+            profile_pic_url=fs.url(filename)
+
+            try:
+                user=CustomUser.objects.create_user(username=username,password=password,email=email,last_name=last_name,first_name=first_name,user_type=3)
+                user.students.address=address
+                course_obj=Courses.objects.get(id=course_id)
+                user.students.course_id=course_obj
+                user.students.session_start_year=session_start
+                user.students.session_end_year=session_end
+                user.students.gender=sex
+                user.students.profile_pic=profile_pic_url
+                user.save()
+                messages.success(request,"Successfully Added Student")
+                return HttpResponseRedirect(reverse("add_student"))
+            except:
+                messages.error(request,"Failed to Add Student")
+                return HttpResponseRedirect(reverse("add_student"))
+        else:
+            form=AddStudentForm(request.POST)
+            return render(request, "staff_template/add_student_template.html", {"form": form})
 
 
-def add_subject(request):
+def hod_add_subject(request):
     courses=Courses.objects.all()
     staffs=CustomUser.objects.filter(user_type=2)
     return render(request,"hod_template/add_subject_template.html",{"staffs":staffs,"courses":courses})
+
+def staff_add_subject(request):
+    courses=Courses.objects.all()
+    staffs=CustomUser.objects.filter(user_type=2)
+    return render(request,"staff_template/add_subject_template.html",{"staffs":staffs,"courses":courses})
 
 def add_subject_save(request):
     if request.method!="POST":
@@ -175,9 +226,13 @@ def manage_staff(request):
     staffs=Staffs.objects.all()
     return render(request,"hod_template/manage_staff_template.html",{"staffs":staffs})
 
-def manage_student(request):
+def hod_manage_student(request):
     students=Students.objects.all()
     return render(request,"hod_template/manage_student_template.html",{"students":students})
+
+def staff_manage_student(request):
+    students=Students.objects.all()
+    return render(request,"staff_template/manage_student_template.html",{"students":students})
 
 def manage_course(request):
     courses=Courses.objects.all()

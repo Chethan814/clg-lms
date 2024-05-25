@@ -35,6 +35,81 @@
           </li>
         </ul>
       </nav>
+      <li class="nav-item">
+        {% url 'add_student' as add_student %}
+      <a href="{% url 'staff_add_student' %}" class="nav-link {% if request.path == add_student %} active {% endif %}">
+        <i class="nav-icon fas fa-th"></i>
+        <p>
+          Add Student
+        </p>
+      </a>
+    </li>
+    <li class="nav-item">
+        {% url 'manage_student' as manage_student %}
+        {% url 'edit_student' student_id=id as edit_student %}
+      <a href="{% url 'staff_manage_student' %}" class="nav-link {% if request.path == manage_student %} active {% endif %} {% if request.path == edit_student %} active {% endif %}">
+        <i class="nav-icon fas fa-th"></i>
+        <p>
+          Manage Students
+        </p>
+      </a>
+    </li>
+    <li class="nav-item">
+      {% url 'add_course' as add_course %}
+      <a href="{% url 'add_course' %}" class="nav-link {% if request.path == add_course %} active {% endif %}">
+        <i class="nav-icon fas fa-th"></i>
+        <p>
+          Add Course
+        </p>
+      </a>
+    </li>
+    <li class="nav-item">
+      {% url 'manage_course' as manage_course %}
+        {% url 'edit_course' course_id=id as edit_course %}
+      <a href="{% url 'manage_course' %}" class="nav-link {% if request.path == manage_course %} active {% endif %} {% if request.path == edit_course %} active {% endif %}">
+        <i class="nav-icon fas fa-th"></i>
+        <p>
+          Manage Course
+        </p>
+      </a>
+    </li>
+    <li class="nav-item">
+      {% url 'add_subject' as add_subject %}
+      <a href="{% url 'staff_add_subject' %}" class="nav-link {% if request.path == add_subject %} active {% endif %}">
+        <i class="nav-icon fas fa-th"></i>
+        <p>
+          Add Subject
+        </p>
+      </a>
+    </li>
+    <li class="nav-item">
+      {% url 'manage_subject' as manage_subject %}
+      {% url 'edit_subject' subject_id=id as edit_subject %}
+      <a href="{% url 'manage_subject' %}" class="nav-link {% if request.path == manage_subject %} active {% endif %} {% if request.path == edit_subject %} active {% endif %} ">
+        <i class="nav-icon fas fa-th"></i>
+        <p>
+          Manage Subject
+        </p>
+      </a>
+    </li>
+     <li class="nav-item">
+       <a href="{% url 'add_staff' %}" class="nav-link">
+        <i class="nav-icon fas fa-th"></i>
+        <p>
+          View Attendance
+          <span class="right badge badge-danger">New</span>
+        </p>
+      </a>
+    </li>
+     <li class="nav-item">
+      <a href="{% url 'add_staff' %}" class="nav-link">
+        <i class="nav-icon fas fa-th"></i>
+        <p>
+          Student Feedback
+          <span class="right badge badge-danger">New</span>
+        </p>
+      </a>
+    </li>
       <!-- /.sidebar-menu -->
     </div>
     <!-- /.sidebar -->
